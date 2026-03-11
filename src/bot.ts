@@ -1,4 +1,5 @@
 import { Client, Events, GatewayIntentBits, Partials } from 'discord.js';
+import { createServer } from 'http';
 import { config } from './config';
 import { logger } from './utils/logger';
 import { readyHandler } from './events/ready';
@@ -50,6 +51,13 @@ process.on('unhandledRejection', (reason) => {
 process.on('uncaughtException', (err) => {
   logger.error('Uncaught exception', { error: err.message, stack: err.stack });
   process.exit(1);
+});
+
+// ── Health check server (required for Render free web service) ────────────────
+
+const PORT = process.env.PORT ?? 3000;
+createServer((_, res) => { res.writeHead(200); res.end('ok'); }).listen(PORT, () => {
+  logger.info(`Health check listening on port ${PORT}`);
 });
 
 // ── Login ─────────────────────────────────────────────────────────────────────
