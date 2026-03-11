@@ -17,18 +17,18 @@
     "dotenv": "^16.4.5",
     "node-cron": "^3.0.3",
     "winston": "^3.11.0",
-    "zod": "^3.22.4"
-  },
-  "devDependencies": {
+    "zod": "^3.22.4",
     "@types/node": "^22.5.0",
     "@types/node-cron": "^3.0.11",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^7.1.0",
     "@typescript-eslint/parser": "^7.1.0",
     "eslint": "^8.57.0",
     "nodemon": "^3.1.0",
     "prettier": "^3.2.5",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "ts-node": "^10.9.2"
   },
   "engines": {
     "node": ">=22.5.0"
