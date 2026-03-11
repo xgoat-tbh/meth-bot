@@ -1,0 +1,10 @@
+{
+  "watch": ["src"],
+  "ext": "ts",
+  "exec": "ts-node src/bot.ts",
+  "ignore": ["src/**/*.test.ts"],
+  "env": {
+    "NODE_ENV": "development",
+    "NODE_NO_WARNINGS": "1"
+  }
+}
