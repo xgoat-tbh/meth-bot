@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/bot.js",
+    "postinstall": "npm run build",
     "dev": "nodemon --exec ts-node src/bot.ts",
     "lint": "eslint src --ext .ts",
     "format": "prettier --write src/**/*.ts",
