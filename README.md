@@ -1,221 +1,79 @@
 # Meth Bot
 
-A production-quality chaotic entertainment Discord bot built with **Node.js**, **TypeScript**, and **discord.js v14**.
+A chaotic entertainment Discord bot built with **Node.js**, **TypeScript**, and **discord.js v14**.
 
-Features a persistent economy system, AI-powered roast engine, and a dynamic chaos event system.
+Persistent economy, item shop with active perks, AI-powered roast engine, auctions, and a chaos event system — all prefix-based, no slash commands.
 
 ---
 
-## Features
+## Commands
 
-| Category | Commands |
+### Economy
+
+| Command | Description | Cooldown |
+|---|---|---|
+| `!balance` | Check your coin balance and title | — |
+| `!work` | Earn coins from working | 1 hour |
+| `!crime` | Attempt a crime for bigger rewards (60% success) | 2 hours |
+| `!rob @user` | Rob another user (chance-based) | 30 minutes |
+| `!daily` | Collect your daily reward (300 coins) | 24 hours |
+| `!gamble <amount\|all>` | Bet up to 5,000 coins per spin | 30 seconds |
+| `!give @user <amount>` | Send coins to another user | 10 seconds |
+| `!leaderboard` | Top 10 richest users | 10 seconds |
+
+### Shop & Auction
+
+| Command | Description | Cooldown |
+|---|---|---|
+| `!shop` | Browse the item shop with interactive pages | 10 seconds |
+| `!shop buy <id>` | Buy an item directly by ID | 10 seconds |
+| `!shop inv` | View your inventory | 10 seconds |
+| `!shop equip <id>` | Equip a title item to display on your balance | 10 seconds |
+| `!startauction <item> <price> [mins]` | Start a public auction (pings @everyone) | — |
+| `!sa` | Alias for `!startauction` | — |
+| `!bid <amount>` | Place a custom bid on the active auction | 5 seconds |
+
+### Roast Engine
+
+| Command | Description | Cooldown |
+|---|---|---|
+| `!roast @user` | Generate an AI roast targeting a user | 10 seconds |
+| `!selfroast` | Roast yourself | 10 seconds |
+
+### Chaos
+
+| Command | Description | Cooldown |
+|---|---|---|
+| `!chaos` | Trigger a random chaos event | 30 seconds |
+| `!spin` | Spin the chaos wheel | 20 seconds |
+| `!victim` | Set a chaos victim | 10 seconds |
+
+### General
+
+| Command | Description |
 |---|---|
-| **Economy** | `!balance`, `!work`, `!crime`, `!rob`, `!daily`, `!gamble`, `!give`, `!leaderboard` |
-| **Roast Engine** | `!roast @user`, `!selfroast` |
-| **Chaos Engine** | `!chaos`, `!spin`, `!victim` |
-| **Admin** | `!help` |
-
-- Passive chaos events fire every hour via cron scheduler
-- Persistent SQLite database with WAL mode
-- Winston structured logging to console + `/logs/`
-- Zod-validated environment configuration
-- Per-command cooldown system
-- Auto-removal of slash commands on startup
-- Graceful shutdown handling
+| `!help` | Interactive help menu with category dropdown |
 
 ---
 
-## Prerequisites
+## Shop Items & Perks
 
-- Node.js v18+
-- npm or yarn
+All perks are **passive** — active as long as you own the item. Equipping a title only changes your display name on `!balance`.
 
----
+| # | Item | Price | Perk |
+|---|---|---|---|
+| 1 | 🐀 Street Rat | 500 | Cosmetic title only |
+| 2 | 🐁 Rat Bastard | 2,000 | Rob cooldown 30m → 15m |
+| 3 | 📱 Burner Phone | 3,500 | Crime cooldown 2h → 1h |
+| 4 | 🔌 The Plug | 5,000 | Work earns +20% more coins |
+| 5 | 🍀 Lucky Charm | 7,500 | Gamble: jackpot 4%, triple 12% |
+| 6 | 🧪 Walter White | 10,000 | Work earns +35% more coins |
+| 7 | 🎩 Heisenberg | 15,000 | Crime +10% success rate, +25% winnings |
+| 8 | 🎿 Ski Mask | 8,000 | Rob minimum 50% success chance |
+| 9 | 🧱 Golden Brick | 12,000 | +25 flat coins per work action |
+| 10 | 👑 El Jefe | 25,000 | Daily reward doubled (600 coins) |
 
-## Installation
-
-```bash
-# 1. Clone the repository
-git clone <your-repo-url>
-cd meth-bot
-
-# 2. Install dependencies
-npm install
-
-# 3. Copy and configure environment variables
-cp .env.example .env
-```
-
----
-
-## Environment Configuration
-
-Edit `.env` with your values:
-
-```env
-# Required
-DISCORD_TOKEN=your_discord_bot_token
-CLIENT_ID=your_application_client_id
-
-# Optional — enables AI roasts (OpenAI-compatible API)
-AI_API_URL=https://api.openai.com/v1/chat/completions
-AI_API_KEY=your_openai_api_key
-AI_MODEL=gpt-3.5-turbo
-
-# Optional defaults
-PREFIX=!
-DATABASE_PATH=./data/meth-bot.db
-LOG_LEVEL=info
-NODE_ENV=production
-```
-
-### Getting your Discord credentials
-
-1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
-2. Create a new application
-3. Navigate to **Bot** → copy the **Token** → set as `DISCORD_TOKEN`
-4. On the **General Information** page, copy the **Application ID** → set as `CLIENT_ID`
-5. Under **Bot** → **Privileged Gateway Intents**, enable:
-   - **Server Members Intent**
-   - **Message Content Intent**
-
-### Invite the bot
-
-```
-https://discord.com/api/oauth2/authorize?client_id=YOUR_CLIENT_ID&permissions=274878221376&scope=bot
-```
-
----
-
-## Running the Bot
-
-### Development (with hot reload)
-
-```bash
-npm run dev
-```
-
-### Production
-
-```bash
-# Build TypeScript
-npm run build
-
-# Start compiled output
-npm start
-```
-
----
-
-## Production Deployment
-
-### Option A — PM2
-
-```bash
-npm install -g pm2
-
-# Build first
-npm run build
-
-# Start with PM2
-pm2 start dist/bot.js --name "meth-bot"
-
-# Auto-restart on reboot
-pm2 save
-pm2 startup
-```
-
-### Option B — systemd (Linux)
-
-Create `/etc/systemd/system/meth-bot.service`:
-
-```ini
-[Unit]
-Description=Meth Bot
-After=network.target
-
-[Service]
-Type=simple
-User=your_user
-WorkingDirectory=/path/to/meth-bot
-ExecStart=/usr/bin/node dist/bot.js
-Restart=on-failure
-EnvironmentFile=/path/to/meth-bot/.env
-
-[Install]
-WantedBy=multi-user.target
-```
-
-```bash
-sudo systemctl enable meth-bot
-sudo systemctl start meth-bot
-```
-
-### Option C — Docker
-
-```dockerfile
-FROM node:20-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY dist ./dist
-CMD ["node", "dist/bot.js"]
-```
-
----
-
-## Project Structure
-
-```
-meth-bot/
-├── src/
-│   ├── bot.ts                    # Entrypoint
-│   ├── config.ts                 # Zod-validated env config
-│   ├── types/
-│   │   └── Command.ts            # Command interface
-│   ├── commands/
-│   │   ├── admin/help.ts
-│   │   ├── economy/
-│   │   │   ├── balance.ts
-│   │   │   ├── work.ts
-│   │   │   ├── crime.ts
-│   │   │   ├── rob.ts
-│   │   │   ├── daily.ts
-│   │   │   ├── gamble.ts
-│   │   │   ├── give.ts
-│   │   │   └── leaderboard.ts
-│   │   ├── roast/
-│   │   │   ├── roast.ts
-│   │   │   └── selfroast.ts
-│   │   └── chaos/
-│   │       ├── chaos.ts
-│   │       ├── spin.ts
-│   │       └── victim.ts
-│   ├── services/
-│   │   ├── userService.ts        # DB CRUD
-│   │   ├── economyService.ts     # Economy logic + embeds
-│   │   ├── roastService.ts       # AI + fallback roasts
-│   │   └── chaosService.ts       # Chaos event logic
-│   ├── events/
-│   │   ├── ready.ts              # Startup + slash command cleanup
-│   │   ├── messageCreate.ts      # Command dispatcher
-│   │   └── error.ts
-│   ├── database/
-│   │   ├── db.ts                 # SQLite connection
-│   │   └── schema.ts             # Table definitions + types
-│   ├── utils/
-│   │   ├── logger.ts             # Winston logger
-│   │   ├── cooldown.ts           # Cooldown manager
-│   │   └── random.ts             # Random utilities
-│   └── schedulers/
-│       └── chaosScheduler.ts     # Hourly cron chaos events
-├── logs/                         # Auto-created at runtime
-├── data/                         # SQLite database (auto-created)
-├── .env.example
-├── package.json
-├── tsconfig.json
-└── nodemon.json
-```
+> Work perks stack: Walter White / The Plug apply a multiplier, then Golden Brick adds a flat bonus on top.
 
 ---
 
@@ -225,7 +83,7 @@ meth-bot/
 
 ### Title Progression
 
-| Coins | Title |
+| Coins | Auto Title |
 |---|---|
 | 0 | Peasant |
 | 500 | Broke Boy |
@@ -236,41 +94,137 @@ meth-bot/
 | 50,000 | Crime Boss |
 | 100,000 | Meth Mogul |
 
-### Gamble Odds
+### Gamble Odds (base)
 
-| Outcome | Probability | Payout |
+| Outcome | Chance | Payout |
 |---|---|---|
-| Lose | 45% | 0x |
-| Double | 45% | 2x |
-| Triple | 8% | 3x |
-| Jackpot | 2% | 10x |
+| Lose | 45% | 0× |
+| Double | 45% | 2× |
+| Triple | 8% | 3× |
+| Jackpot | 2% | 10× |
+
+Max bet: **5,000 coins** per spin. Lucky Charm improves jackpot to 4% and triple to 12%.
 
 ---
 
 ## AI Roast Engine
 
-Set `AI_API_URL` and `AI_API_KEY` in `.env` to use an OpenAI-compatible endpoint.
+Roasts are generated via an OpenAI-compatible API (default: Groq). Falls back to Gemini if configured, then to a built-in library of 30+ savage roasts if both APIs are unavailable.
 
-If the API is unavailable or not configured, the bot falls back to a built-in roast template library automatically.
+Set `AI_API_URL`, `AI_API_KEY`, and optionally `GEMINI_API_KEY` in `.env`.
+
+---
+
+## Setup
+
+### Prerequisites
+
+- Node.js v22.5+
+- npm
+
+### Installation
+
+```bash
+git clone https://github.com/xgoat-tbh/meth-bot.git
+cd meth-bot
+npm install
+cp .env.example .env
+```
+
+Edit `.env`:
+
+```env
+DISCORD_TOKEN=your_discord_bot_token
+CLIENT_ID=your_application_client_id
+PREFIX=!
+
+AI_API_URL=https://api.groq.com/openai/v1/chat/completions
+AI_API_KEY=your_api_key
+AI_MODEL=llama-3.1-8b-instant
+
+GEMINI_API_KEY=your_gemini_api_key   # optional fallback
+
+DATABASE_PATH=./data/meth-bot.db
+LOG_LEVEL=info
+NODE_ENV=production
+```
+
+Enable **Message Content Intent** and **Server Members Intent** in the Discord Developer Portal under your bot settings.
+
+Invite URL:
+```
+https://discord.com/api/oauth2/authorize?client_id=YOUR_CLIENT_ID&permissions=274878221376&scope=bot
+```
+
+### Running
+
+```bash
+# Development (hot reload)
+npm run dev
+
+# Production
+npm run build
+npm start
+```
+
+---
+
+## Project Structure
+
+```
+src/
+├── bot.ts
+├── config.ts
+├── commands/
+│   ├── economy/
+│   │   ├── balance.ts
+│   │   ├── work.ts
+│   │   ├── crime.ts
+│   │   ├── rob.ts
+│   │   ├── daily.ts
+│   │   ├── gamble.ts
+│   │   ├── give.ts
+│   │   ├── leaderboard.ts
+│   │   ├── shop.ts
+│   │   ├── auction.ts
+│   │   └── bid.ts
+│   ├── roast/
+│   │   ├── roast.ts
+│   │   └── selfroast.ts
+│   ├── chaos/
+│   │   ├── chaos.ts
+│   │   ├── spin.ts
+│   │   └── victim.ts
+│   └── general/
+│       └── help.ts
+├── services/
+│   ├── userService.ts
+│   ├── economyService.ts
+│   ├── shopService.ts
+│   ├── auctionService.ts
+│   ├── roastService.ts
+│   └── chaosService.ts
+├── database/
+│   ├── db.ts
+│   └── schema.ts
+├── events/
+│   ├── ready.ts
+│   ├── messageCreate.ts
+│   └── error.ts
+├── schedulers/
+│   └── chaosScheduler.ts
+├── utils/
+│   ├── cooldown.ts
+│   ├── logger.ts
+│   └── random.ts
+└── types/
+    └── Command.ts
+```
 
 ---
 
 ## Logs
 
-Logs are written to:
-- **Console** — coloured, abbreviated format
-- **`logs/bot.log`** — full structured logs (rotates at 10MB, 5 files)
-- **`logs/error.log`** — errors only (rotates at 5MB, 3 files)
-
----
-
-## Development Scripts
-
-```bash
-npm run dev        # Start with nodemon hot-reload
-npm run build      # Compile TypeScript
-npm start          # Run compiled output
-npm run lint       # ESLint
-npm run format     # Prettier
-npm run typecheck  # tsc --noEmit
-```
+- **Console** — coloured output
+- **`logs/bot.log`** — full structured logs (rotates at 10 MB, 5 files)
+- **`logs/error.log`** — errors only (rotates at 5 MB, 3 files)
