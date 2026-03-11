@@ -2,7 +2,7 @@
 
 A chaotic entertainment Discord bot built with **Node.js**, **TypeScript**, and **discord.js v14**.
 
-Persistent economy, item shop with active perks, AI-powered roast engine, auctions, and a chaos event system — all prefix-based, no slash commands.
+Persistent economy, item shop with active perks, roast engine, auctions, and a chaos event system — all prefix-based, no slash commands.
 
 ---
 
@@ -37,7 +37,7 @@ Persistent economy, item shop with active perks, AI-powered roast engine, auctio
 
 | Command | Description | Cooldown |
 |---|---|---|
-| `!roast @user` | Generate an AI roast targeting a user | 10 seconds |
+| `!roast @user` | Roast a user | 10 seconds |
 | `!selfroast` | Roast yourself | 10 seconds |
 
 ### Chaos
@@ -104,68 +104,6 @@ All perks are **passive** — active as long as you own the item. Equipping a ti
 | Jackpot | 2% | 10× |
 
 Max bet: **5,000 coins** per spin. Lucky Charm improves jackpot to 4% and triple to 12%.
-
----
-
-## AI Roast Engine
-
-Roasts are generated via an OpenAI-compatible API (default: Groq). Falls back to Gemini if configured, then to a built-in library of 30+ savage roasts if both APIs are unavailable.
-
-Set `AI_API_URL`, `AI_API_KEY`, and optionally `GEMINI_API_KEY` in `.env`.
-
----
-
-## Project Structure
-
-```
-src/
-├── bot.ts
-├── config.ts
-├── commands/
-│   ├── economy/
-│   │   ├── balance.ts
-│   │   ├── work.ts
-│   │   ├── crime.ts
-│   │   ├── rob.ts
-│   │   ├── daily.ts
-│   │   ├── gamble.ts
-│   │   ├── give.ts
-│   │   ├── leaderboard.ts
-│   │   ├── shop.ts
-│   │   ├── auction.ts
-│   │   └── bid.ts
-│   ├── roast/
-│   │   ├── roast.ts
-│   │   └── selfroast.ts
-│   ├── chaos/
-│   │   ├── chaos.ts
-│   │   ├── spin.ts
-│   │   └── victim.ts
-│   └── general/
-│       └── help.ts
-├── services/
-│   ├── userService.ts
-│   ├── economyService.ts
-│   ├── shopService.ts
-│   ├── auctionService.ts
-│   ├── roastService.ts
-│   └── chaosService.ts
-├── database/
-│   ├── db.ts
-│   └── schema.ts
-├── events/
-│   ├── ready.ts
-│   ├── messageCreate.ts
-│   └── error.ts
-├── schedulers/
-│   └── chaosScheduler.ts
-├── utils/
-│   ├── cooldown.ts
-│   ├── logger.ts
-│   └── random.ts
-└── types/
-    └── Command.ts
-```
 
 ---
 
